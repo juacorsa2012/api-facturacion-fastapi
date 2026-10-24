@@ -78,7 +78,36 @@ Todas las rutas de recursos usan el prefijo `/api/v1` y devuelven la envoltura `
 | `PATCH` | `/api/v1/dominios/{dominio_id}/baja` | Dar de baja (`motivo` opcional en query) |
 | `PATCH` | `/api/v1/dominios/{dominio_id}/alta` | Dar de alta |
 
-La paginación usa `offset` y `limit`; los estados admitidos son `ALTA` y `BAJA`. El nombre de dominio se normaliza a minúsculas. Su precio debe ser positivo y su fecha de renovación debe existir en el calendario (se admite el 29 de febrero).
+La paginación usa `offset` y `limit`: el desplazamiento predeterminado es `0`, el límite predeterminado es `100` y el máximo admitido es `500`. Los estados admitidos son `ALTA` y `BAJA`. El parámetro opcional `motivo` de las rutas de baja admite hasta 255 caracteres. El nombre de dominio se normaliza a minúsculas. Su precio debe ser positivo y su fecha de renovación debe existir en el calendario (se admite el 29 de febrero).
+
+## Respuestas de error
+
+Los errores controlados de la aplicación devuelven `success`, `code` y `message`. Por ejemplo, un recurso inexistente responde con HTTP `404`:
+
+```json
+{
+  "success": false,
+  "code": "RECURSO_NO_ENCONTRADO",
+  "message": "cliente '123' no encontrado"
+}
+```
+
+Las solicitudes que no cumplen la validación de FastAPI responden con HTTP `422` e incluyen `errors` con las ubicaciones y tipos de error detectados:
+
+```json
+{
+  "success": false,
+  "code": "ERROR_VALIDACION",
+  "message": "Los datos enviados no son válidos",
+  "errors": [
+    {
+      "type": "missing",
+      "loc": ["body", "nombre_corto"],
+      "msg": "Field required"
+    }
+  ]
+}
+```
 
 ## Tests
 
@@ -96,7 +125,7 @@ Ejecuta la suite:
 uv run pytest
 ```
 
-Los tests con mocks no hacen consultas propias, pero el `autouse` de `tests/conftest.py` también inicializa y limpia la base de datos de test para cada caso.
+La fixture de `tests/conftest.py` crea el esquema desde los modelos con `Base.metadata.create_all` y limpia las tablas después de cada test; no aplica las migraciones de Alembic. Los tests de `tests/routers/test_cliente_router.py` llaman a la API por HTTP. Aunque `tests/routers/test_dominio_router.py` está dentro de `routers`, sus pruebas llaman directamente a `DominioService` y usan la base de datos de test; no prueban el router HTTP. Los tests con mocks también activan la fixture automática de base de datos.
 
 ## Estructura
 
