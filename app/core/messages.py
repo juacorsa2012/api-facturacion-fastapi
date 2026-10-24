@@ -38,4 +38,13 @@ class MensajesHosting:
   YA_EXISTE = "Ya existe un hosting con ese nombre"
   DADO_DE_BAJA = "Hosting dado de baja correctamente"
   DADO_DE_ALTA = "Hosting dado de alta correctamente"
+
+
+class MensajesVps:
+  CREADO = "VPS registrado correctamente"
+  ACTUALIZADO = "VPS actualizado correctamente"
+  OBTENIDO = "VPS obtenido correctamente"
+  LISTADOS = "VPS obtenidos correctamente"
+  DADO_DE_BAJA = "VPS dado de baja correctamente"
+  DADO_DE_ALTA = "VPS dado de alta correctamente"
   

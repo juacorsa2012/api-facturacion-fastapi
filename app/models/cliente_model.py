@@ -54,8 +54,10 @@ class Cliente(TimestampMixin, Base):
     index=True,
   )
 
+  domiciliacion: Mapped[str | None] = mapped_column(String(50))
   fecha_baja: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
   motivo_baja: Mapped[str | None] = mapped_column(String(255))
 
   dominios: Mapped[list["Dominio"]] = relationship(back_populates="cliente")
   hostings: Mapped[list["Hosting"]] = relationship(back_populates="cliente")
+  vps: Mapped[list["Vps"]] = relationship(back_populates="cliente")

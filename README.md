@@ -1,6 +1,6 @@
 # API de facturación
 
-API asíncrona para gestionar clientes, dominios y servicios de hosting, construida con FastAPI, SQLAlchemy y PostgreSQL.
+API asíncrona para gestionar clientes, dominios, servicios de hosting y VPS, construida con FastAPI, SQLAlchemy y PostgreSQL.
 
 ## Requisitos
 
@@ -85,13 +85,13 @@ Para generar hostings asociados a clientes existentes:
 uv run python -m app.seeds --tipo hostings --cantidad 20
 ```
 
-Para generar clientes y dominios, el seed crea primero los clientes:
+Para generar VPS asociados a clientes existentes:
 
 ```powershell
-uv run python -m app.seeds --tipo ambos --cantidad 20
+uv run python -m app.seeds --tipo vps --cantidad 20
 ```
 
-Usa `--tipo todos` para generar clientes, dominios y hostings en una base vacía:
+Usa `--tipo todos` para generar clientes, dominios, hostings y VPS en una base vacía:
 
 ```powershell
 uv run python -m app.seeds --tipo todos --cantidad 20
@@ -123,6 +123,12 @@ Todas las rutas de recursos usan el prefijo `/api/v1` y devuelven la envoltura `
 | `PATCH` | `/api/v1/hostings/{hosting_id}` | Actualizar parcialmente |
 | `PATCH` | `/api/v1/hostings/{hosting_id}/baja` | Dar de baja (`motivo` opcional en query) |
 | `PATCH` | `/api/v1/hostings/{hosting_id}/alta` | Dar de alta |
+| `POST` | `/api/v1/vps/` | Crear VPS |
+| `GET` | `/api/v1/vps/` | Listar, filtrar por estado y paginar |
+| `GET` | `/api/v1/vps/{vps_id}` | Obtener VPS |
+| `PATCH` | `/api/v1/vps/{vps_id}` | Actualizar parcialmente |
+| `PATCH` | `/api/v1/vps/{vps_id}/baja` | Dar de baja (`motivo` opcional en query) |
+| `PATCH` | `/api/v1/vps/{vps_id}/alta` | Dar de alta |
 
 La paginación usa `offset` y `limit`: el desplazamiento predeterminado es `0`, el límite predeterminado es `100` y el máximo admitido es `500`. Los estados admitidos son `ALTA` y `BAJA`. El parámetro opcional `motivo` de las rutas de baja admite hasta 255 caracteres. El nombre de dominio se normaliza a minúsculas. Su precio debe ser positivo y su fecha de renovación debe existir en el calendario (se admite el 29 de febrero).
 
@@ -171,7 +177,9 @@ Ejecuta la suite:
 uv run pytest
 ```
 
-La fixture de `tests/conftest.py` crea el esquema desde los modelos con `Base.metadata.create_all` y limpia las tablas después de cada test; no aplica las migraciones de Alembic. Los tests de `tests/routers/test_cliente_router.py` llaman a la API por HTTP. Aunque `tests/routers/test_dominio_router.py` está dentro de `routers`, sus pruebas llaman directamente a `DominioService` y usan la base de datos de test; no prueban el router HTTP. Los tests con mocks también activan la fixture automática de base de datos.
+La fixture de `tests/conftest.py` crea el esquema desde los modelos con `Base.metadata.create_all` y limpia las tablas después de cada test; no aplica las migraciones de Alembic. Por eso, la suite no comprueba que las migraciones construyan el mismo esquema que los modelos.
+
+Los tests de `tests/routers/` para clientes, hostings y VPS llaman a la API por HTTP. `tests/routers/test_dominio_router.py` conserva ese nombre y ubicación, pero sus pruebas llaman directamente a `DominioService` contra la base de datos; no prueban el router HTTP. Los archivos de `tests/services/` comprueban los servicios, incluyendo casos con mocks. Los tests con mocks también activan la fixture automática de base de datos.
 
 ## Estructura
 

@@ -5,6 +5,7 @@ from app.core.database import get_db_session
 from app.services.cliente_service import ClienteService
 from app.services.dominio_service import DominioService
 from app.services.hosting_service import HostingService
+from app.services.vps_service import VpsService
 
 def get_cliente_service(db: AsyncSession = Depends(get_db_session)) -> ClienteService:
   return ClienteService(db)
@@ -25,4 +26,11 @@ def get_hosting_service(db: AsyncSession = Depends(get_db_session)) -> HostingSe
 
 
 HostingServiceDep = Annotated[HostingService, Depends(get_hosting_service)]
+
+
+def get_vps_service(db: AsyncSession = Depends(get_db_session)) -> VpsService:
+  return VpsService(db)
+
+
+VpsServiceDep = Annotated[VpsService, Depends(get_vps_service)]
 
