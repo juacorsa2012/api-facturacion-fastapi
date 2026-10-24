@@ -59,6 +59,34 @@ También puedes usar `py main.py` si el intérprete seleccionado por el lanzador
 
 Documentación interactiva de OpenAPI: `http://localhost:8000/docs` (ajusta el puerto si `PORT` tiene otro valor). Comprobación de estado: `http://localhost:8000/health`.
 
+## Datos iniciales
+
+Después de aplicar las migraciones, puedes generar datos ficticios con Faker. Por defecto se generan 10 clientes:
+
+```powershell
+uv run python -m app.seeds
+```
+
+Indica otra cantidad con `--cantidad`:
+
+```powershell
+uv run python -m app.seeds --cantidad 50
+```
+
+Para generar dominios asociados a clientes existentes:
+
+```powershell
+uv run python -m app.seeds --tipo dominios --cantidad 20
+```
+
+Para generar ambos tipos de datos en una base vacía, el seed crea primero los clientes y después los dominios:
+
+```powershell
+uv run python -m app.seeds --tipo ambos --cantidad 20
+```
+
+El comando crea nuevos registros al ejecutarse; evita usarlo repetidamente contra una base de datos de producción. Comprueba que `.env` apunta a la base de datos deseada antes de ejecutarlo.
+
 ## Rutas
 
 Todas las rutas de recursos usan el prefijo `/api/v1` y devuelven la envoltura `ApiResponse`.
