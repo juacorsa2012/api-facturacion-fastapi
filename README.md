@@ -1,6 +1,6 @@
 # API de facturación
 
-API asíncrona para gestionar clientes y sus dominios, construida con FastAPI, SQLAlchemy y PostgreSQL.
+API asíncrona para gestionar clientes, dominios y servicios de hosting, construida con FastAPI, SQLAlchemy y PostgreSQL.
 
 ## Requisitos
 
@@ -79,10 +79,22 @@ Para generar dominios asociados a clientes existentes:
 uv run python -m app.seeds --tipo dominios --cantidad 20
 ```
 
-Para generar ambos tipos de datos en una base vacía, el seed crea primero los clientes y después los dominios:
+Para generar hostings asociados a clientes existentes:
+
+```powershell
+uv run python -m app.seeds --tipo hostings --cantidad 20
+```
+
+Para generar clientes y dominios, el seed crea primero los clientes:
 
 ```powershell
 uv run python -m app.seeds --tipo ambos --cantidad 20
+```
+
+Usa `--tipo todos` para generar clientes, dominios y hostings en una base vacía:
+
+```powershell
+uv run python -m app.seeds --tipo todos --cantidad 20
 ```
 
 El comando crea nuevos registros al ejecutarse; evita usarlo repetidamente contra una base de datos de producción. Comprueba que `.env` apunta a la base de datos deseada antes de ejecutarlo.
@@ -105,6 +117,12 @@ Todas las rutas de recursos usan el prefijo `/api/v1` y devuelven la envoltura `
 | `PATCH` | `/api/v1/dominios/{dominio_id}` | Actualizar parcialmente |
 | `PATCH` | `/api/v1/dominios/{dominio_id}/baja` | Dar de baja (`motivo` opcional en query) |
 | `PATCH` | `/api/v1/dominios/{dominio_id}/alta` | Dar de alta |
+| `POST` | `/api/v1/hostings/` | Crear hosting |
+| `GET` | `/api/v1/hostings/` | Listar, filtrar por estado y paginar |
+| `GET` | `/api/v1/hostings/{hosting_id}` | Obtener hosting |
+| `PATCH` | `/api/v1/hostings/{hosting_id}` | Actualizar parcialmente |
+| `PATCH` | `/api/v1/hostings/{hosting_id}/baja` | Dar de baja (`motivo` opcional en query) |
+| `PATCH` | `/api/v1/hostings/{hosting_id}/alta` | Dar de alta |
 
 La paginación usa `offset` y `limit`: el desplazamiento predeterminado es `0`, el límite predeterminado es `100` y el máximo admitido es `500`. Los estados admitidos son `ALTA` y `BAJA`. El parámetro opcional `motivo` de las rutas de baja admite hasta 255 caracteres. El nombre de dominio se normaliza a minúsculas. Su precio debe ser positivo y su fecha de renovación debe existir en el calendario (se admite el 29 de febrero).
 

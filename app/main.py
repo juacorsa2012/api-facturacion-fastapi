@@ -12,6 +12,7 @@ from app.core.exception_handlers import register_exception_handlers
 from app.schemas.api_response import ApiResponse
 from app.routers.cliente_router import router as cliente_router
 from app.routers.dominio_router import router as dominio_router
+from app.routers.hosting_router import router as hosting_router
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -35,6 +36,7 @@ register_exception_handlers(app)
 
 app.include_router(cliente_router, prefix="/api/v1/clientes", tags=["Clientes"])
 app.include_router(dominio_router, prefix="/api/v1/dominios", tags=["Dominios"])
+app.include_router(hosting_router, prefix="/api/v1/hostings", tags=["Hostings"])
 
 
 @app.get("/health", response_model=ApiResponse)

@@ -32,6 +32,8 @@ class MensajesDominio:
 class MensajesHosting:
   CREADO = "Hosting registrado correctamente"
   ACTUALIZADO = "Hosting actualizado correctamente"
+  OBTENIDO = "Hosting obtenido correctamente"
+  LISTADOS = "Hostings obtenidos correctamente"
   NO_ENCONTRADO = "No se encontró el hosting"
   YA_EXISTE = "Ya existe un hosting con ese nombre"
   DADO_DE_BAJA = "Hosting dado de baja correctamente"
