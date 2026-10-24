@@ -3,6 +3,7 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.pagination import DEFAULT_LIMIT, DEFAULT_OFFSET
 from app.exceptions.cliente_exceptions import ClienteYaExisteError, ClienteNoEncontradoError
 from app.models.cliente_model import Cliente
 from app.models.enums import Estado
@@ -22,7 +23,7 @@ class ClienteService:
     return cliente
 
   
-  async def obtener_todos(self, *, offset: int = 0, limit: int = 100, estado: Estado | None = None) -> list[Cliente]:
+  async def obtener_todos(self, *, offset: int = DEFAULT_OFFSET, limit: int = DEFAULT_LIMIT, estado: Estado | None = None) -> list[Cliente]:
     consulta = select(Cliente).order_by(Cliente.nombre_corto).offset(offset).limit(limit)
 
     if estado is not None:

@@ -19,8 +19,8 @@ class Cliente(TimestampMixin, Base):
   domiciliacion: Mapped[str | None] = mapped_column(String(25))
   email: Mapped[str | None] = mapped_column(String(255))
   iva: Mapped[Decimal] = mapped_column(Numeric(5, 2), default=Decimal("21.00"), server_default="21.00")
-  precio_desplazamiento: Mapped[Decimal] = mapped_column(Numeric(5, 2), default=Decimal("25.00"), server_default="25.00")
-  precio_mano_obra: Mapped[Decimal] = mapped_column(Numeric(5, 2), default=Decimal("55.00"), server_default="55.00")
+  precio_desplazamiento: Mapped[Decimal] = mapped_column(Numeric(8, 2), default=Decimal("25.00"), server_default="25.00")
+  precio_mano_obra: Mapped[Decimal] = mapped_column(Numeric(8, 2), default=Decimal("55.00"), server_default="55.00")
 
   empresa: Mapped[Empresa] = mapped_column(
     Enum(Empresa, native_enum=False, length=5),

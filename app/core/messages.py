@@ -21,6 +21,8 @@ class MensajesCliente:
 class MensajesDominio:
   CREADO = "Dominio registrado correctamente"
   ACTUALIZADO = "Dominio actualizado correctamente"
+  OBTENIDO = "Dominio obtenido correctamente"
+  LISTADOS = "Dominios obtenidos correctamente"
   NO_ENCONTRADO = "No se encontró el dominio"
   YA_EXISTE = "Ya existe un dominio con ese nombre"
   DADO_DE_BAJA = "Dominio dado de baja correctamente"

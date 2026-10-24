@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Query, status
+from app.core.pagination import DEFAULT_LIMIT, DEFAULT_OFFSET, MAX_LIMIT
 from app.schemas.cliente_schema import ClienteCreate, ClienteResponse, ClienteUpdate
 from app.schemas.api_response import ApiResponse
 from app.core.dependencies import ClienteServiceDep
@@ -16,7 +17,7 @@ async def crear(datos: ClienteCreate, service: ClienteServiceDep) -> ApiResponse
   )
 
 @router.get("/", response_model=ApiResponse[list[ClienteResponse]])
-async def obtener_todos(service: ClienteServiceDep, offset: int = Query(default=0, ge=0), limit: int = Query(default=100, ge=1, le=500), estado: Estado | None = None) -> ApiResponse[list[ClienteResponse]]:
+async def obtener_todos(service: ClienteServiceDep, offset: int = Query(default=DEFAULT_OFFSET, ge=0), limit: int = Query(default=DEFAULT_LIMIT, ge=1, le=MAX_LIMIT), estado: Estado | None = None) -> ApiResponse[list[ClienteResponse]]:
   clientes = await service.obtener_todos(offset=offset, limit=limit, estado=estado)
   return ApiResponse[list[ClienteResponse]](
     message=MensajesCliente.LISTADOS,
@@ -40,7 +41,7 @@ async def actualizar(cliente_id: int, datos: ClienteUpdate, service: ClienteServ
   )
 
 @router.patch("/{cliente_id}/baja", response_model=ApiResponse[ClienteResponse])
-async def dar_de_baja(cliente_id: int, service: ClienteServiceDep, motivo: str | None = None) -> ApiResponse[ClienteResponse]:
+async def dar_de_baja(cliente_id: int, service: ClienteServiceDep, motivo: str | None = Query(default=None, max_length=255)) -> ApiResponse[ClienteResponse]:
   cliente = await service.dar_de_baja(cliente_id, motivo)
   return ApiResponse[ClienteResponse](
     message=MensajesCliente.DADO_DE_BAJA,

@@ -58,10 +58,13 @@ async def test_payload_invalido_devuelve_422_no_cumple_con_el_schema(client: Asy
   r = await client.post("/clientes/", json={"nombre_corto": "a"})
   assert r.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
   body = r.json()
+  assert body["success"] is False
+  assert body["code"] == "ERROR_VALIDACION"
+  assert body["message"] == "Los datos enviados no son válidos"
 
   campos_ausentes = {
     error["loc"][-1]
-    for error in body["detail"]
+    for error in body["errors"]
     if error["type"] == "missing"
   }
   assert campos_ausentes == {
@@ -279,7 +282,7 @@ async def test_actualizar_cliente_rechaza_campos_desconocidos(client: AsyncClien
   assert any(
     error["type"] == "extra_forbidden"
     and error["loc"][-1] == "campo_desconocido"
-    for error in r.json()["detail"]
+    for error in r.json()["errors"]
   )
 
 async def test_actualizar_cliente_rechaza_null_en_campo_obligatorio(client: AsyncClient):
@@ -293,7 +296,7 @@ async def test_actualizar_cliente_rechaza_null_en_campo_obligatorio(client: Asyn
   assert any(
     error["loc"][-1] == "body"
     and "nombre_corto no puede ser null" in error["msg"]
-    for error in r.json()["detail"]
+    for error in r.json()["errors"]
   )
 
 async def test_crear_cliente_aplica_valores_por_defecto(client: AsyncClient):
