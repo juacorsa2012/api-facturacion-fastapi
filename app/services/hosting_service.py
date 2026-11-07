@@ -20,7 +20,6 @@ from app.schemas.hosting_schema import (
   validar_dia_mes_renovacion,
 )
 
-
 def _constraint_name(exc: IntegrityError) -> str | None:
   """Obtiene el nombre de la restricción con asyncpg o psycopg."""
   original = exc.orig
@@ -41,13 +40,7 @@ class HostingService:
       raise HostingNoEncontradoError(hosting_id)
     return hosting
 
-  async def obtener_todos(
-    self,
-    *,
-    offset: int = DEFAULT_OFFSET,
-    limit: int = DEFAULT_LIMIT,
-    estado: Estado | None = None,
-  ) -> list[Hosting]:
+  async def obtener_todos(self, *, offset: int = DEFAULT_OFFSET, limit: int = DEFAULT_LIMIT, estado: Estado | None = None) -> list[Hosting]:
     consulta = select(Hosting).order_by(Hosting.nombre).offset(offset).limit(limit)
     if estado is not None:
       consulta = consulta.where(Hosting.estado == estado)
@@ -56,15 +49,11 @@ class HostingService:
     return list(resultado.all())
 
   async def crear(self, datos: HostingCreate) -> Hosting:
-    existe_cliente = await self.db.scalar(
-      select(Cliente.id).where(Cliente.id == datos.cliente_id)
-    )
+    existe_cliente = await self.db.scalar(select(Cliente.id).where(Cliente.id == datos.cliente_id))
     if existe_cliente is None:
       raise ClienteNoEncontradoError(datos.cliente_id)
 
-    existe = await self.db.scalar(
-      select(Hosting.id).where(Hosting.nombre == datos.nombre)
-    )
+    existe = await self.db.scalar(select(Hosting.id).where(Hosting.nombre == datos.nombre))
     if existe is not None:
       raise HostingYaExisteError(datos.nombre)
 

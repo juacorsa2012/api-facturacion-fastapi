@@ -19,7 +19,6 @@ PrecioVps = Annotated[Decimal, Field(gt=0, max_digits=8, decimal_places=2)]
 DomiciliacionVps = Annotated[str, StringConstraints(strip_whitespace=True, max_length=50)]
 InfoAdicionalVps = Annotated[str, StringConstraints(max_length=1000)]
 
-
 class VpsBase(BaseModel):
   cliente_id: Annotated[int, Field(gt=0)]
   descripcion: DescripcionVps

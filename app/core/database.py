@@ -41,7 +41,7 @@ async def get_db_session() -> AsyncIterator[AsyncSession]:
 
 
 async def dispose_engine() -> None:
-  """Cierra el pool de conexiones. Llamar al apagar la app."""
+  """Cierra el pool de conexiones"""
   global _engine, _session_factory
   if _engine is not None:
     await _engine.dispose()

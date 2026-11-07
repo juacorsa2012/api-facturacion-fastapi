@@ -10,27 +10,17 @@ from app.services.vps_service import VpsService
 def get_cliente_service(db: AsyncSession = Depends(get_db_session)) -> ClienteService:
   return ClienteService(db)
 
-
-ClienteServiceDep = Annotated[ClienteService, Depends(get_cliente_service)]
-
-
 def get_dominio_service(db: AsyncSession = Depends(get_db_session)) -> DominioService:
   return DominioService(db)
-
-
-DominioServiceDep = Annotated[DominioService, Depends(get_dominio_service)]
-
 
 def get_hosting_service(db: AsyncSession = Depends(get_db_session)) -> HostingService:
   return HostingService(db)
 
-
-HostingServiceDep = Annotated[HostingService, Depends(get_hosting_service)]
-
-
 def get_vps_service(db: AsyncSession = Depends(get_db_session)) -> VpsService:
   return VpsService(db)
 
-
+ClienteServiceDep = Annotated[ClienteService, Depends(get_cliente_service)]
+DominioServiceDep = Annotated[DominioService, Depends(get_dominio_service)]
+HostingServiceDep = Annotated[HostingService, Depends(get_hosting_service)]
 VpsServiceDep = Annotated[VpsService, Depends(get_vps_service)]
 

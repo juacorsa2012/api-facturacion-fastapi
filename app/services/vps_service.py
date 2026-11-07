@@ -31,9 +31,7 @@ class VpsService:
     return list(resultado.all())
 
   async def crear(self, datos: VpsCreate) -> Vps:
-    existe_cliente = await self.db.scalar(
-      select(Cliente.id).where(Cliente.id == datos.cliente_id)
-    )
+    existe_cliente = await self.db.scalar(select(Cliente.id).where(Cliente.id == datos.cliente_id))
     if existe_cliente is None:
       raise ClienteNoEncontradoError(datos.cliente_id)
 
@@ -53,9 +51,7 @@ class VpsService:
       return vps
 
     cliente_id = cambios.get("cliente_id", vps.cliente_id)
-    existe_cliente = await self.db.scalar(
-      select(Cliente.id).where(Cliente.id == cliente_id)
-    )
+    existe_cliente = await self.db.scalar(select(Cliente.id).where(Cliente.id == cliente_id))
     if existe_cliente is None:
       raise ClienteNoEncontradoError(cliente_id)
 
