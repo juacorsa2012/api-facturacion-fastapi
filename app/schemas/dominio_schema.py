@@ -26,7 +26,9 @@ def validar_dia_mes_renovacion(dia: int, mes: int) -> None:
 
 
 class DominioBase(BaseModel):
-  cliente_id: int
+  model_config = ConfigDict(extra="forbid")
+
+  cliente_id: Annotated[int, Field(gt=0)]
   nombre: NombreDominio
   dia_renovacion: Annotated[int, Field(ge=1, le=31)]
   mes_renovacion: Annotated[int, Field(ge=1, le=12)]
@@ -45,7 +47,7 @@ class DominioCreate(DominioBase):
 
 
 class DominioUpdate(BaseModel):
-  cliente_id: int | None = None
+  cliente_id: Annotated[int, Field(gt=0)] | None = None
   nombre: NombreDominio | None = None
   dia_renovacion: Annotated[int, Field(ge=1, le=31)] | None = None
   mes_renovacion: Annotated[int, Field(ge=1, le=12)] | None = None

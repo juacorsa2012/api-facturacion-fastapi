@@ -29,7 +29,12 @@ DATABASE_URL=postgresql+asyncpg://usuario:contraseña@localhost:5432/facturacion
 API_DESCRIPCION=API de facturación
 API_VERSION=1.0.0
 PORT=8000
+JWT_SECRET_KEY=cambia-por-una-clave-segura-de-al-menos-32-caracteres
+JWT_ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=30
 ```
+
+Genera un valor aleatorio y privado para `JWT_SECRET_KEY` en cada entorno; no uses el texto de ejemplo como secreto real. `JWT_ALGORITHM` determina el algoritmo de firma y `ACCESS_TOKEN_EXPIRE_MINUTES` la duración del token.
 
 No subas `.env` ni `.env.test` al repositorio. Los archivos de ejemplo no contienen credenciales reales.
 
@@ -108,6 +113,9 @@ Todas las rutas de recursos usan el prefijo `/api/v1` y devuelven la envoltura `
 | `POST` | `/api/v1/clientes/` | Crear cliente |
 | `GET` | `/api/v1/clientes/` | Listar, filtrar por estado y paginar |
 | `GET` | `/api/v1/clientes/{cliente_id}` | Obtener cliente |
+| `GET` | `/api/v1/clientes/{cliente_id}/dominios` | Listar dominios del cliente, filtrar por estado y paginar |
+| `GET` | `/api/v1/clientes/{cliente_id}/hostings` | Listar hostings del cliente, filtrar por estado y paginar |
+| `GET` | `/api/v1/clientes/{cliente_id}/vps` | Listar VPS del cliente, filtrar por estado y paginar |
 | `PATCH` | `/api/v1/clientes/{cliente_id}` | Actualizar parcialmente |
 | `PATCH` | `/api/v1/clientes/{cliente_id}/baja` | Dar de baja (`motivo` opcional en query) |
 | `PATCH` | `/api/v1/clientes/{cliente_id}/alta` | Dar de alta |
@@ -129,12 +137,16 @@ Todas las rutas de recursos usan el prefijo `/api/v1` y devuelven la envoltura `
 | `PATCH` | `/api/v1/vps/{vps_id}` | Actualizar parcialmente |
 | `PATCH` | `/api/v1/vps/{vps_id}/baja` | Dar de baja (`motivo` opcional en query) |
 | `PATCH` | `/api/v1/vps/{vps_id}/alta` | Dar de alta |
+| `POST` | `/api/v1/auth/registrar` | Registrar usuario |
+| `POST` | `/api/v1/auth/login` | Iniciar sesión y obtener un token JWT |
 
-La paginación usa `offset` y `limit`: el desplazamiento predeterminado es `0`, el límite predeterminado es `100` y el máximo admitido es `500`. Los estados admitidos son `ALTA` y `BAJA`. El parámetro opcional `motivo` de las rutas de baja admite hasta 255 caracteres. El nombre de dominio se normaliza a minúsculas. Su precio debe ser positivo y su fecha de renovación debe existir en el calendario (se admite el 29 de febrero).
+La paginación usa `offset` y `limit`: el desplazamiento predeterminado es `0`, el límite predeterminado es `100` y el máximo admitido es `500`. Los estados admitidos son `ALTA` y `BAJA`. Los IDs de ruta deben ser mayores que cero. El parámetro opcional `motivo` de las rutas de baja admite hasta 255 caracteres. El nombre de dominio se normaliza a minúsculas. Su precio debe ser positivo y su fecha de renovación debe existir en el calendario (se admite el 29 de febrero).
+
+El registro requiere nombre, email válido y una contraseña de 8 a 128 caracteres que contenga letras y números. El login devuelve `access_token` y `token_type`. Aunque se emiten tokens y existe una dependencia para validar usuarios, actualmente las rutas de clientes, dominios, hostings y VPS no requieren autenticación.
 
 ## Respuestas de error
 
-Los errores controlados de la aplicación devuelven `success`, `code` y `message`. Por ejemplo, un recurso inexistente responde con HTTP `404`:
+Los errores controlados de la aplicación y los errores HTTP de FastAPI devuelven `success`, `code` y `message`. Por ejemplo, un recurso inexistente responde con HTTP `404`:
 
 ```json
 {
@@ -160,6 +172,8 @@ Las solicitudes que no cumplen la validación de FastAPI responden con HTTP `422
   ]
 }
 ```
+
+Los errores HTTP generados por FastAPI (por ejemplo, una ruta inexistente) usan un código `HTTP_<estado>`, como `HTTP_404`. Los errores de autenticación usan también la envoltura estándar; los 401 incluyen la cabecera `WWW-Authenticate: Bearer`.
 
 ## Tests
 

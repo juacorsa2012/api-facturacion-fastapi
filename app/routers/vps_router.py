@@ -1,4 +1,6 @@
-from fastapi import APIRouter, Query, status
+from typing import Annotated
+
+from fastapi import APIRouter, Path, Query, status
 
 from app.core.dependencies import VpsServiceDep
 from app.core.messages import MensajesVps
@@ -29,24 +31,24 @@ async def obtener_todos(
 
 
 @router.get("/{vps_id}", response_model=ApiResponse[VpsResponse])
-async def obtener_por_id(vps_id: int, service: VpsServiceDep) -> ApiResponse[VpsResponse]:
+async def obtener_por_id(vps_id: Annotated[int, Path(gt=0)], service: VpsServiceDep) -> ApiResponse[VpsResponse]:
   vps = await service.obtener_por_id(vps_id)
   return ApiResponse[VpsResponse](message=MensajesVps.OBTENIDO, data=VpsResponse.model_validate(vps))
 
 
 @router.patch("/{vps_id}", response_model=ApiResponse[VpsResponse])
-async def actualizar(vps_id: int, datos: VpsUpdate, service: VpsServiceDep) -> ApiResponse[VpsResponse]:
+async def actualizar(vps_id: Annotated[int, Path(gt=0)], datos: VpsUpdate, service: VpsServiceDep) -> ApiResponse[VpsResponse]:
   vps = await service.actualizar(vps_id, datos)
   return ApiResponse[VpsResponse](message=MensajesVps.ACTUALIZADO, data=VpsResponse.model_validate(vps))
 
 
 @router.patch("/{vps_id}/baja", response_model=ApiResponse[VpsResponse])
-async def dar_de_baja(vps_id: int, service: VpsServiceDep, motivo: str | None = Query(default=None, max_length=255)) -> ApiResponse[VpsResponse]:
+async def dar_de_baja(vps_id: Annotated[int, Path(gt=0)], service: VpsServiceDep, motivo: str | None = Query(default=None, max_length=255)) -> ApiResponse[VpsResponse]:
   vps = await service.dar_de_baja(vps_id, motivo)
   return ApiResponse[VpsResponse](message=MensajesVps.DADO_DE_BAJA, data=VpsResponse.model_validate(vps))
 
 
 @router.patch("/{vps_id}/alta", response_model=ApiResponse[VpsResponse])
-async def dar_de_alta(vps_id: int, service: VpsServiceDep) -> ApiResponse[VpsResponse]:
+async def dar_de_alta(vps_id: Annotated[int, Path(gt=0)], service: VpsServiceDep) -> ApiResponse[VpsResponse]:
   vps = await service.dar_de_alta(vps_id)
   return ApiResponse[VpsResponse](message=MensajesVps.DADO_DE_ALTA, data=VpsResponse.model_validate(vps))

@@ -8,8 +8,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-from app.models.cliente_model import Cliente
-from app.models.dominio_model import Dominio
+from app.models import *  # noqa: F403
 from app.core.database import Base
 
 # this is the Alembic Config object, which provides

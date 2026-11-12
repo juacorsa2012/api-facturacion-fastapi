@@ -16,6 +16,9 @@ class MensajesCliente:
   DADO_DE_ALTA = "Cliente dado de alta correctamente"
   NO_ENCONTRADO = "No se encontró el cliente"
   YA_EXISTE = "Ya existe un cliente con ese nombre corto"
+  DOMINIOS_OBTENIDOS = "Dominios obtenidos correctamente"
+  HOSTINGS_OBTENIDOS = "Hostings obtenidos correctamente"
+  VPS_OBTENIDOS = "VPS del cliente obtenidos correctamente"
 
 
 class MensajesDominio:
@@ -48,3 +51,10 @@ class MensajesVps:
   DADO_DE_BAJA = "VPS dado de baja correctamente"
   DADO_DE_ALTA = "VPS dado de alta correctamente"
   
+class MensajesAuth:
+  CREADO = "Usuario registrado correctamente"
+  LOGIN_OK = "Inicio de sesión correcto"
+  EMAIL_YA_REGISTRADO = "El email ya está registrado"
+  CREDENCIALES_INVALIDAS = "Credenciales inválidas"
+  TOKEN_INVALIDO = "Token inválido o caducado"
+  USUARIO_INACTIVO = "Usuario inactivo"

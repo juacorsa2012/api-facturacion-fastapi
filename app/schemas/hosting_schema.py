@@ -27,6 +27,8 @@ def validar_dia_mes_renovacion(dia: int, mes: int) -> None:
 
 
 class HostingBase(BaseModel):
+  model_config = ConfigDict(extra="forbid")
+
   cliente_id: Annotated[int, Field(gt=0)]
   nombre: NombreHosting
   dia_renovacion: Annotated[int, Field(ge=1, le=31)]

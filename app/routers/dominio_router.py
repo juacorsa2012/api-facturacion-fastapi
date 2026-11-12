@@ -1,4 +1,6 @@
-from fastapi import APIRouter, Query, status
+from typing import Annotated
+
+from fastapi import APIRouter, Path, Query, status
 
 from app.core.dependencies import DominioServiceDep
 from app.core.messages import MensajesDominio
@@ -28,14 +30,14 @@ async def obtener_todos(
 
 
 @router.get("/{dominio_id}", response_model=ApiResponse[DominioResponse])
-async def obtener_por_id(dominio_id: int, service: DominioServiceDep) -> ApiResponse[DominioResponse]:
+async def obtener_por_id(dominio_id: Annotated[int, Path(gt=0)], service: DominioServiceDep) -> ApiResponse[DominioResponse]:
   dominio = await service.obtener_por_id(dominio_id)
   return ApiResponse[DominioResponse](message=MensajesDominio.OBTENIDO, data=DominioResponse.model_validate(dominio))
 
 
 @router.patch("/{dominio_id}", response_model=ApiResponse[DominioResponse])
 async def actualizar(
-  dominio_id: int,
+  dominio_id: Annotated[int, Path(gt=0)],
   datos: DominioUpdate,
   service: DominioServiceDep,
 ) -> ApiResponse[DominioResponse]:
@@ -45,7 +47,7 @@ async def actualizar(
 
 @router.patch("/{dominio_id}/baja", response_model=ApiResponse[DominioResponse])
 async def dar_de_baja(
-  dominio_id: int,
+  dominio_id: Annotated[int, Path(gt=0)],
   service: DominioServiceDep,
   motivo: str | None = Query(default=None, max_length=255),
 ) -> ApiResponse[DominioResponse]:
@@ -54,6 +56,6 @@ async def dar_de_baja(
 
 
 @router.patch("/{dominio_id}/alta", response_model=ApiResponse[DominioResponse])
-async def dar_de_alta(dominio_id: int, service: DominioServiceDep) -> ApiResponse[DominioResponse]:
+async def dar_de_alta(dominio_id: Annotated[int, Path(gt=0)], service: DominioServiceDep) -> ApiResponse[DominioResponse]:
   dominio = await service.dar_de_alta(dominio_id)
   return ApiResponse[DominioResponse](message=MensajesDominio.DADO_DE_ALTA, data=DominioResponse.model_validate(dominio))

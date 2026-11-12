@@ -16,7 +16,7 @@ class Cliente(TimestampMixin, Base):
   codigo_postal: Mapped[str] = mapped_column(String(10), nullable=False)
   poblacion: Mapped[str] = mapped_column(String(50), nullable=False)
   cif: Mapped[str] = mapped_column(String(25), nullable=False)
-  domiciliacion: Mapped[str | None] = mapped_column(String(25))
+  domiciliacion: Mapped[str | None] = mapped_column(String(50))
   email: Mapped[str | None] = mapped_column(String(255))
   iva: Mapped[Decimal] = mapped_column(Numeric(5, 2), default=Decimal("21.00"), server_default="21.00")
   precio_desplazamiento: Mapped[Decimal] = mapped_column(Numeric(8, 2), default=Decimal("25.00"), server_default="25.00")
@@ -54,7 +54,6 @@ class Cliente(TimestampMixin, Base):
     index=True,
   )
 
-  domiciliacion: Mapped[str | None] = mapped_column(String(50))
   fecha_baja: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
   motivo_baja: Mapped[str | None] = mapped_column(String(255))
 

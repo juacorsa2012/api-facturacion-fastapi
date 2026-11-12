@@ -1,4 +1,6 @@
-from fastapi import APIRouter, Query, status
+from typing import Annotated
+
+from fastapi import APIRouter, Path, Query, status
 
 from app.core.dependencies import HostingServiceDep
 from app.core.messages import MensajesHosting
@@ -29,14 +31,14 @@ async def obtener_todos(
 
 
 @router.get("/{hosting_id}", response_model=ApiResponse[HostingResponse])
-async def obtener_por_id(hosting_id: int, service: HostingServiceDep) -> ApiResponse[HostingResponse]:
+async def obtener_por_id(hosting_id: Annotated[int, Path(gt=0)], service: HostingServiceDep) -> ApiResponse[HostingResponse]:
   hosting = await service.obtener_por_id(hosting_id)
   return ApiResponse[HostingResponse](message=MensajesHosting.OBTENIDO, data=HostingResponse.model_validate(hosting))
 
 
 @router.patch("/{hosting_id}", response_model=ApiResponse[HostingResponse])
 async def actualizar(
-  hosting_id: int,
+  hosting_id: Annotated[int, Path(gt=0)],
   datos: HostingUpdate,
   service: HostingServiceDep,
 ) -> ApiResponse[HostingResponse]:
@@ -46,7 +48,7 @@ async def actualizar(
 
 @router.patch("/{hosting_id}/baja", response_model=ApiResponse[HostingResponse])
 async def dar_de_baja(
-  hosting_id: int,
+  hosting_id: Annotated[int, Path(gt=0)],
   service: HostingServiceDep,
   motivo: str | None = Query(default=None, max_length=255),
 ) -> ApiResponse[HostingResponse]:
@@ -55,6 +57,6 @@ async def dar_de_baja(
 
 
 @router.patch("/{hosting_id}/alta", response_model=ApiResponse[HostingResponse])
-async def dar_de_alta(hosting_id: int, service: HostingServiceDep) -> ApiResponse[HostingResponse]:
+async def dar_de_alta(hosting_id: Annotated[int, Path(gt=0)], service: HostingServiceDep) -> ApiResponse[HostingResponse]:
   hosting = await service.dar_de_alta(hosting_id)
   return ApiResponse[HostingResponse](message=MensajesHosting.DADO_DE_ALTA, data=HostingResponse.model_validate(hosting))

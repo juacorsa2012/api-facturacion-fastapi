@@ -20,6 +20,8 @@ DomiciliacionVps = Annotated[str, StringConstraints(strip_whitespace=True, max_l
 InfoAdicionalVps = Annotated[str, StringConstraints(max_length=1000)]
 
 class VpsBase(BaseModel):
+  model_config = ConfigDict(extra="forbid")
+
   cliente_id: Annotated[int, Field(gt=0)]
   descripcion: DescripcionVps
   dia_renovacion: Annotated[int, Field(ge=1, le=31)]

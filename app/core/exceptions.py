@@ -36,3 +36,12 @@ class AlreadyExistsError(AppError):
       error_code="RECURSO_DUPLICADO",
       status_code=status.HTTP_409_CONFLICT,
     )
+
+class EmailYaRegistrado(Exception):
+  pass
+
+class CredencialesInvalidas(Exception):
+  pass
+
+class TokenInvalido(Exception):
+  pass

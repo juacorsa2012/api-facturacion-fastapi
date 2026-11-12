@@ -2,7 +2,7 @@ from datetime import datetime
 from decimal import Decimal
 from typing import Annotated
 
-from pydantic import BaseModel, ConfigDict, StringConstraints, model_validator
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, StringConstraints, model_validator
 
 from app.models.enums import Empresa, Estado, FormaPago, Vencimiento
 
@@ -29,11 +29,15 @@ Texto255 = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1,
 CodigoPostal = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=10)]
 Poblacion = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=50)]
 Cif = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=25)]
-Domiciliacion = Annotated[str, StringConstraints(strip_whitespace=True, max_length=25)]
-Email = Annotated[str, StringConstraints(strip_whitespace=True, max_length=255)]
+Domiciliacion = Annotated[str, StringConstraints(strip_whitespace=True, max_length=50)]
+Email = Annotated[EmailStr, Field(max_length=255)]
+Iva = Annotated[Decimal, Field(max_digits=5, decimal_places=2)]
+PrecioCliente = Annotated[Decimal, Field(max_digits=8, decimal_places=2)]
 
 
 class ClienteBase(BaseModel):
+  model_config = ConfigDict(extra="forbid")
+
   nombre_corto: NombreCorto
   nombre_largo: NombreLargo
   direccion: Texto255
@@ -45,9 +49,9 @@ class ClienteBase(BaseModel):
 
 
 class ClienteCreate(ClienteBase):
-  iva: Decimal = Decimal("21.00")
-  precio_desplazamiento: Decimal = Decimal("25.00")
-  precio_mano_obra: Decimal = Decimal("55.00")
+  iva: Iva = Decimal("21.00")
+  precio_desplazamiento: PrecioCliente = Decimal("25.00")
+  precio_mano_obra: PrecioCliente = Decimal("55.00")
   empresa: Empresa = Empresa.LEMS
   forma_pago: FormaPago = FormaPago.RECIBO
   vencimiento: Vencimiento = Vencimiento.UN_MES
@@ -62,9 +66,9 @@ class ClienteUpdate(BaseModel):
   cif: Cif | None = None
   domiciliacion: Domiciliacion | None = None
   email: Email | None = None
-  iva: Decimal | None = None
-  precio_desplazamiento: Decimal | None = None
-  precio_mano_obra: Decimal | None = None
+  iva: Iva | None = None
+  precio_desplazamiento: PrecioCliente | None = None
+  precio_mano_obra: PrecioCliente | None = None
   empresa: Empresa | None = None
   forma_pago: FormaPago | None = None
   vencimiento: Vencimiento | None = None

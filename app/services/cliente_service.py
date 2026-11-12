@@ -2,10 +2,12 @@ from datetime import datetime, timezone
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
-
 from app.core.pagination import DEFAULT_LIMIT, DEFAULT_OFFSET
 from app.exceptions.cliente_exceptions import ClienteYaExisteError, ClienteNoEncontradoError
 from app.models.cliente_model import Cliente
+from app.models.dominio_model import Dominio
+from app.models.hosting_model import Hosting
+from app.models.vps_model import Vps
 from app.models.enums import Estado
 from app.schemas.cliente_schema import ClienteCreate, ClienteUpdate
 
@@ -31,6 +33,46 @@ class ClienteService:
 
     resultado = await self.db.scalars(consulta)
     return list(resultado.all())
+
+
+  async def obtener_dominios(self, *, cliente_id: int, offset: int = DEFAULT_OFFSET, limit: int = DEFAULT_LIMIT, estado: Estado | None = None) -> list[Dominio]:
+    await self.obtener_por_id(cliente_id)  # lanza ClienteNoEncontradoError si no existe
+
+    consulta = select(Dominio).where(Dominio.cliente_id == cliente_id)
+
+    if estado is not None:
+      consulta = consulta.where(Dominio.estado == estado)
+
+    consulta = consulta.order_by(Dominio.id).offset(offset).limit(limit)
+
+    resultado = await self.db.execute(consulta)
+    return list(resultado.scalars().all())
+
+  async def obtener_hostings(self, *, cliente_id: int, offset: int = DEFAULT_OFFSET, limit: int = DEFAULT_LIMIT, estado: Estado | None = None) -> list[Hosting]:
+    await self.obtener_por_id(cliente_id)  # lanza ClienteNoEncontradoError si no existe
+
+    consulta = select(Hosting).where(Hosting.cliente_id == cliente_id)
+
+    if estado is not None:
+      consulta = consulta.where(Hosting.estado == estado)
+
+    consulta = consulta.order_by(Hosting.id).offset(offset).limit(limit)
+
+    resultado = await self.db.execute(consulta)
+    return list(resultado.scalars().all())
+
+  async def obtener_vps(self, *, cliente_id: int, offset: int = DEFAULT_OFFSET, limit: int = DEFAULT_LIMIT, estado: Estado | None = None) -> list[Vps]:
+    await self.obtener_por_id(cliente_id)  # lanza ClienteNoEncontradoError si no existe
+
+    consulta = select(Vps).where(Vps.cliente_id == cliente_id)
+
+    if estado is not None:
+      consulta = consulta.where(Vps.estado == estado)
+
+    consulta = consulta.order_by(Vps.id).offset(offset).limit(limit)
+
+    resultado = await self.db.execute(consulta)
+    return list(resultado.scalars().all())
 
   
   async def crear(self, datos: ClienteCreate) -> Cliente:
